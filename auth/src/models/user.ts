@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Password } from '../services/password';
 
 interface IUserAttrs {
   email: string,
@@ -10,7 +11,6 @@ interface UserModel extends mongoose.Model<UserDoc> {
 }
 
 interface UserDoc extends mongoose.Document {
-  _id: string,
   email: string,
   password: string,
 }
@@ -24,7 +24,25 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   }
+}, {
+  toJSON: {
+    transform(doc, ret) {
+      ret.id = ret._id;
+      delete ret.password;
+      delete ret._id;
+    },
+    versionKey: false,
+  }
 });
+
+userSchema.pre('save', async function (done) {
+  if (this.isModified('password')) {
+    const hashed = await Password.toHash(this.get('password'));
+    this.set('password', hashed);
+  }
+  done();
+});
+
 userSchema.statics.build = (attrs: IUserAttrs) => {
   return new User(attrs);
 }
@@ -32,3 +50,4 @@ userSchema.statics.build = (attrs: IUserAttrs) => {
 const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
 
 export { User };
+
