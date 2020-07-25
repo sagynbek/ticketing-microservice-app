@@ -1,0 +1,37 @@
+{
+  "name": "@sagyntickets/common",
+  "version": "1.0.2",
+  "description": "",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "pub": "npm run build && npm version patch && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagynbek/ticketing-microservice-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sagynbek/ticketing-microservice-app/issues"
+  },
+  "homepage": "https://github.com/sagynbek/ticketing-microservice-app#readme",
+  "devDependencies": {
+    "typescript": "3.9.7"
+  },
+  "dependencies": {
+    "@types/cookie-session": "2.0.41",
+    "@types/express": "4.17.7",
+    "@types/jsonwebtoken": "8.5.0",
+    "cookie-session": "1.4.0",
+    "express": "4.17.1",
+    "express-validator": "6.6.0",
+    "jsonwebtoken": "8.5.1"
+  }
+}
