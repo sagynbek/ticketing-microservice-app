@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
 import mongoose from 'mongoose';
+import { natsWrapper } from '../../nats-wrapper';
 
 const generateValidId = () => {
   return new mongoose.Types.ObjectId().toHexString();
@@ -101,4 +102,27 @@ it('updates the ticked provided valid data', async () => {
 
   expect(ticketResponse.body.title).toEqual('Updated');
   expect(ticketResponse.body.price).toEqual(77);
+});
+
+it('publishes an event', async () => {
+  const cookie = global.signin();
+
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'asdasdasda dasd asd',
+      price: 125,
+    })
+
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'Updated',
+      price: 77,
+    }).expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
